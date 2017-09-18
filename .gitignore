@@ -9,3 +9,7 @@ imgs/
 
 # face prediction models
 models/
+
+# sublime project and workspace configs
+*.sublime-project
+*.sublime-workspace
