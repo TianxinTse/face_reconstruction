@@ -3,3 +3,9 @@ venv/
 
 # pycharm config
 .idea/
+
+# image folder
+imgs/
+
+# face prediction models
+models/
