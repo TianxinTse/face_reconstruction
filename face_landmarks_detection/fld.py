@@ -3,8 +3,12 @@ import os
 import dlib
 from skimage import io
 
-TEST_IMG = '../imgs/ldh.jpg'
-PREDICTOR_MODEL = '../models/predic.dat'
+# The parent folder of this file
+PARENT_PATH = os.path.dirname(__file__) + os.path.sep + '..'
+# The sample image for testing
+TEST_IMG = PARENT_PATH + '/imgs/ldh.jpg'
+# The predictor model
+PREDICTOR_MODEL = PARENT_PATH + '/models/predic.dat'
 
 
 def local_test(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
@@ -16,6 +20,7 @@ def local_test(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
     :param predict_model: The model for predicting face.
     :return: None
     """
+    print(PARENT_PATH)
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(PREDICTOR_MODEL)
     img = io.imread(img_file)
