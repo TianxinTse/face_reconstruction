@@ -1,3 +1,10 @@
+# coding=utf-8
+
+# --------------------------------
+# Author: Tianxin Tse, Qianbo Inc.
+# Date: 2017-09-19
+# --------------------------------
+
 import sys
 import os
 import dlib
@@ -39,6 +46,64 @@ def get_landmarks(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
     shape = predictor(img, dets[0])
 
     return shape
+
+
+def get_cratical_points(shape):
+    """
+    Get cratical points for reconstructing a 3D face model
+
+    :param shape: full_object_detection object of dlib
+    :return: cratical points
+    """
+    cratical_points = []
+
+    # We need 11 cratical points to reconstruct a 3D model for a face
+
+    # point 1  -- location of left ear
+    cratical_points.append([shape.part(1).x, shape.part(1).y])
+
+    # point 15 -- location of right ear
+    cratical_points.append([shape.part(15).x, shape.part(15).y])
+
+    # point 4  -- location of left cheek
+    cratical_points.append([shape.part(4).x, shape.part(4).y])
+
+    # point 12 -- location of right cheek
+    cratical_points.append([shape.part(12).x, shape.part(12).y])
+
+    # point 48 --  left corner of the mouth
+    cratical_points.append([shape.part(48).x, shape.part(48).y])
+
+    # point 54 --  right corner of the mouth
+    cratical_points.append([shape.part(54).x, shape.part(54).y])
+
+    # point 8  -- location of chin
+    cratical_points.append([shape.part(8).x, shape.part(8).y])
+
+    # points 36 to 41 for calculating the location of left eye
+    sum_x = sum([shape.part(i).x for i in range(36, 42)])
+    sum_y = sum([shape.part(i).y for i in range(36, 42)])
+    cratical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
+
+    # points 42 to 47 for calculating the location of left eye
+    sum_x = sum([shape.part(i).x for i in range(42, 48)])
+    sum_y = sum([shape.part(i).y for i in range(42, 48)])
+    cratical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
+
+    # points 30 to 35 for calculating the location of two sides of nose
+    avg_x_interval = int((shape.part(35).x - shape.part(31).x) / 5.0 + 0.5)
+    avg_y = int(sum([shape.part(i).y for i in range(31, 36)]) / 5.0 + 0.5)
+
+    # height of sides of nose
+    nose_height = int((shape.part(30).y + avg_y) / 2.0 + 0.5)
+
+    # left side of nose
+    cratical_points.append([shape.part(31).x - avg_x_interval, nose_height])
+
+    # right side of nose
+    cratical_points.append([shape.part(35).x + avg_x_interval, nose_height])
+
+    return cratical_points
 
 
 def local_test(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
