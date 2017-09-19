@@ -10,6 +10,7 @@ import os
 import dlib
 from skimage import io
 
+
 # The parent folder of this file
 PARENT_PATH = os.path.dirname(__file__) + os.path.sep + '..'
 # The sample image for testing
@@ -25,7 +26,7 @@ def get_landmarks(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
 
     :param img: A jpg image that contains a face.
     :param predict_model: The model for predicting face.
-    :return: landmarks
+    :return: landmarks, a dlib.full_object_detection object
     """
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(PREDICTOR_MODEL)
@@ -48,47 +49,47 @@ def get_landmarks(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
     return shape
 
 
-def get_cratical_points(shape):
+def get_critical_points(shape):
     """
-    Get cratical points for reconstructing a 3D face model
+    Get critical points for reconstructing a 3D face model
 
     :param shape: full_object_detection object of dlib
-    :return: cratical points
+    :return: A list of critical points
     """
-    cratical_points = []
+    critical_points = []
 
-    # We need 11 cratical points to reconstruct a 3D model for a face
+    # We need 11 critical points to reconstruct a 3D model for a face
 
     # point 1  -- location of left ear
-    cratical_points.append([shape.part(1).x, shape.part(1).y])
+    critical_points.append([shape.part(1).x, shape.part(1).y])
 
     # point 15 -- location of right ear
-    cratical_points.append([shape.part(15).x, shape.part(15).y])
+    critical_points.append([shape.part(15).x, shape.part(15).y])
 
     # point 4  -- location of left cheek
-    cratical_points.append([shape.part(4).x, shape.part(4).y])
+    critical_points.append([shape.part(4).x, shape.part(4).y])
 
     # point 12 -- location of right cheek
-    cratical_points.append([shape.part(12).x, shape.part(12).y])
+    critical_points.append([shape.part(12).x, shape.part(12).y])
 
     # point 48 --  left corner of the mouth
-    cratical_points.append([shape.part(48).x, shape.part(48).y])
+    critical_points.append([shape.part(48).x, shape.part(48).y])
 
     # point 54 --  right corner of the mouth
-    cratical_points.append([shape.part(54).x, shape.part(54).y])
+    critical_points.append([shape.part(54).x, shape.part(54).y])
 
     # point 8  -- location of chin
-    cratical_points.append([shape.part(8).x, shape.part(8).y])
+    critical_points.append([shape.part(8).x, shape.part(8).y])
 
     # points 36 to 41 for calculating the location of left eye
     sum_x = sum([shape.part(i).x for i in range(36, 42)])
     sum_y = sum([shape.part(i).y for i in range(36, 42)])
-    cratical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
+    critical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
 
     # points 42 to 47 for calculating the location of left eye
     sum_x = sum([shape.part(i).x for i in range(42, 48)])
     sum_y = sum([shape.part(i).y for i in range(42, 48)])
-    cratical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
+    critical_points.append([int(sum_x / 6.0 + 0.5), int(sum_y / 6.0 + 0.5)])
 
     # points 30 to 35 for calculating the location of two sides of nose
     avg_x_interval = int((shape.part(35).x - shape.part(31).x) / 5.0 + 0.5)
@@ -98,12 +99,52 @@ def get_cratical_points(shape):
     nose_height = int((shape.part(30).y + avg_y) / 2.0 + 0.5)
 
     # left side of nose
-    cratical_points.append([shape.part(31).x - avg_x_interval, nose_height])
+    critical_points.append([shape.part(31).x - avg_x_interval, nose_height])
 
     # right side of nose
-    cratical_points.append([shape.part(35).x + avg_x_interval, nose_height])
+    critical_points.append([shape.part(35).x + avg_x_interval, nose_height])
 
-    return cratical_points
+    return critical_points
+
+
+def generate_xml_marks(img_file, critical_points):
+    """
+    Use critical points of face to generate a bpt.xml file
+
+    :param img: A jpg image that contains a face.
+    :param critical_points: A list containing 11 points.
+    :return: None
+    """
+    # load template xml file
+    template_xml = PARENT_PATH + '/xmls/template.xml'
+    f_template = open(template_xml)
+    lines = f_template.readlines()
+    f_template.close()
+
+    # the first point
+    lines.append('\t<item class_id="1" tracking_level="0" version="0">\n')
+    point = critical_points.pop()
+    lines.append('\t\t<column>' + str(point[0]) + '</column>\n')
+    lines.append('\t\t<row>' + str(point[1]) + '</row>\n')
+    lines.append('\t</item>\n')
+
+    # the rest of points
+    while len(critical_points) > 0:
+        lines.append('\t<item>\n')
+        point = critical_points.pop()
+        lines.append('\t\t<column>' + str(point[0]) + '</column>\n')
+        lines.append('\t\t<row>' + str(point[1]) + '</row>\n')
+        lines.append('\t</item>\n')
+
+    lines.append('</val>\n')
+    lines.append('</boost_serialization>\n')
+
+    # write to result
+    result_xml = os.path.split(img_file)[1].split('.')[0] + '.bpt.xml'
+    result_xml = PARENT_PATH + '/xmls/results/' + result_xml
+    f_result = open(result_xml, 'w')
+    f_result.writelines(lines)
+    f_result.close()
 
 
 def local_test(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
