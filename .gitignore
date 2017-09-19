@@ -16,3 +16,9 @@ models/
 
 # python cache files
 *.pyc
+
+# test folder
+test/
+
+# template and result xmls
+xmls/
