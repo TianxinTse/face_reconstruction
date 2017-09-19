@@ -10,11 +10,10 @@ import os
 import dlib
 from skimage import io
 
-
 # The parent folder of this file
 PARENT_PATH = os.path.dirname(__file__) + os.path.sep + '..'
 # The sample image for testing
-TEST_IMG = PARENT_PATH + '/imgs/ldh.jpg'
+TEST_IMG = PARENT_PATH + '/sources/ldh.jpg'
 # The predictor model
 PREDICTOR_MODEL = PARENT_PATH + '/models/predic.dat'
 
@@ -116,7 +115,7 @@ def generate_xml_marks(img_file, critical_points):
     :return: None
     """
     # load template xml file
-    template_xml = PARENT_PATH + '/xmls/template.xml'
+    template_xml = PARENT_PATH + '/xml/template.xml'
     f_template = open(template_xml)
     lines = f_template.readlines()
     f_template.close()
@@ -141,7 +140,7 @@ def generate_xml_marks(img_file, critical_points):
 
     # write to result
     result_xml = os.path.split(img_file)[1].split('.')[0] + '.bpt.xml'
-    result_xml = PARENT_PATH + '/xmls/results/' + result_xml
+    result_xml = PARENT_PATH + '/sources/' + result_xml
     f_result = open(result_xml, 'w')
     f_result.writelines(lines)
     f_result.close()

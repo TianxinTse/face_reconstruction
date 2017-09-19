@@ -4,8 +4,8 @@ venv/
 # pycharm config
 .idea/
 
-# image folder
-imgs/
+# sources folder for images and xmls
+sources/
 
 # face prediction models
 models/
