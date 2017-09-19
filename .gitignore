@@ -13,3 +13,6 @@ models/
 # sublime project and workspace configs
 *.sublime-project
 *.sublime-workspace
+
+# python cache files
+*.pyc
