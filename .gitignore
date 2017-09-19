@@ -22,3 +22,6 @@ test/
 
 # template and result xmls
 xmls/
+
+# fg3 sdk
+fg3/
