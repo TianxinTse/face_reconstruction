@@ -17,7 +17,7 @@ SDK = '/fg3/sdk/csamDefault33/HeadHires'
 RESULT_FOLDER = '/results/'
 
 
-def generate_fg_file(img_file):
+def generate_fg(img_file):
     """
     Generate fg file from an image and a corresponding xml file
 
@@ -51,6 +51,7 @@ def generate_head(fg_file):
     """
     Generate head mesh from fg file and templates
 
+    :param fg_file:
     :return: None
     """
     # get filename of fg file without extension
@@ -60,6 +61,24 @@ def generate_head(fg_file):
     command = 'fg3 construct ' + \
               PARENT_PATH + SDK + ' ' + \
               PARENT_PATH + fg_file + ' ' + \
+              PARENT_PATH + RESULT_FOLDER + result_filename
+
+    # execute command
+    os.system(command)
+
+
+def generate_fbx(tri_file):
+    """
+    Generate fbx file from mesh file.
+    :param tri_file: mesh file
+    :return: None
+    """
+    # build result filename
+    result_filename = os.path.split(tri_file)[1].split('.')[0] + '.fbx'
+
+    # cmd command
+    command = 'fg3 meshops convert ' + \
+              PARENT_PATH + tri_file + ' ' + \
               PARENT_PATH + RESULT_FOLDER + result_filename
 
     # execute command
