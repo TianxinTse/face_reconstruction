@@ -4,6 +4,7 @@
 # Author: Tianxin Tse, Qianbo Inc.
 # Update-Date: 2017-09-19
 # --------------------------------
+
 from face_landmarks_detection import fld
 import os
 
@@ -46,25 +47,33 @@ def generate_fg(img_file):
     # execute command
     os.system(command)
 
+    # return name of fg file
+    return fg_file
 
-def generate_head(fg_file):
+
+def generate_tri(fg_file):
     """
     Generate head mesh from fg file and templates
 
     :param fg_file:
     :return: None
     """
-    # get filename of fg file without extension
-    result_filename = os.path.split(fg_file)[1].split('.')[0]
+    # get filename
+    filename = os.path.split(fg_file)[1].split('.')[0]
+    tri_file = filename + '.tri'
+    fg_file = filename + '.fg'
 
     # cmd command
     command = 'fg3 construct ' + \
               PARENT_PATH + SDK + ' ' + \
-              PARENT_PATH + fg_file + ' ' + \
-              PARENT_PATH + RESULT_FOLDER + result_filename
+              PARENT_PATH + RESULT_FOLDER + fg_file + ' ' + \
+              PARENT_PATH + RESULT_FOLDER + filename
 
     # execute command
     os.system(command)
+
+    # return name of tri file
+    return tri_file
 
 
 def generate_fbx(tri_file):
@@ -74,12 +83,14 @@ def generate_fbx(tri_file):
     :return: None
     """
     # build result filename
-    result_filename = os.path.split(tri_file)[1].split('.')[0] + '.fbx'
+    filename = os.path.split(tri_file)[1].split('.')[0]
+    fbx_file = filename + '.fbx'
+    tri_file = filename + '.tri'
 
     # cmd command
     command = 'fg3 meshops convert ' + \
-              PARENT_PATH + tri_file + ' ' + \
-              PARENT_PATH + RESULT_FOLDER + result_filename
+              PARENT_PATH + RESULT_FOLDER + tri_file + ' ' + \
+              PARENT_PATH + RESULT_FOLDER + fbx_file
 
     # execute command
     os.system(command)
