@@ -6,7 +6,6 @@
 # --------------------------------
 
 from construct_face import cf
-import os
 import sys
 
 
