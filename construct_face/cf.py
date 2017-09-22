@@ -78,8 +78,8 @@ def generate_tri(fg_file):
 
 def generate_fbx(tri_file):
     """
-    Generate fbx file from mesh file.
-    :param tri_file: mesh file
+    Generate fbx file from tri file.
+    :param tri_file: tri file
     :return: None
     """
     # build result filename
@@ -91,6 +91,28 @@ def generate_fbx(tri_file):
     command = 'fg3 meshops convert ' + \
               PARENT_PATH + RESULT_FOLDER + tri_file + ' ' + \
               PARENT_PATH + RESULT_FOLDER + fbx_file
+
+    # execute command
+    os.system(command)
+
+
+def generate_obj(tri_file):
+    """
+    Generate obj file from tri file
+    :param tri_file: tri file
+    :return: None
+    """
+    # build result filename
+    filename = os.path.split(tri_file)[1].split('.')[0]
+    obj_file = filename + '.obj'
+    tri_file = filename + '.tri'
+    bmp_file = filename + '.bmp'
+
+    # cmd command
+    command = 'fg3 triexport ' + \
+              PARENT_PATH + RESULT_FOLDER + obj_file + ' ' + \
+              PARENT_PATH + RESULT_FOLDER + tri_file + ' ' + \
+              PARENT_PATH + RESULT_FOLDER + bmp_file
 
     # execute command
     os.system(command)
