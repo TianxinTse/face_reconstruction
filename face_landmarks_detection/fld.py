@@ -32,6 +32,8 @@ def get_landmarks(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
     :param predict_model: The model for predicting face.
     :return: landmarks, a dlib.full_object_detection object
     """
+    print("\t\tDetecting feature points of face...", end='')
+
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(PREDICTOR_MODEL)
     img = io.imread(img_file)
@@ -50,6 +52,7 @@ def get_landmarks(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
 
     shape = predictor(img, dets[0])
 
+    print('\tOK')
     return shape
 
 
@@ -60,6 +63,8 @@ def get_critical_points(shape):
     :param shape: full_object_detection object of dlib
     :return: A list of critical points
     """
+    print("\t\tGeting critical points of face for creconstructing...", end='')
+
     critical_points = []
 
     # We need 11 critical points to reconstruct a 3D model for a face
@@ -108,6 +113,7 @@ def get_critical_points(shape):
     # right side of nose
     critical_points.append([shape.part(35).x + avg_x_interval, nose_height])
 
+    print('\tOK')
     return critical_points
 
 
@@ -119,6 +125,8 @@ def generate_xml_marks(img_file, critical_points):
     :param critical_points: A list containing 11 points.
     :return: None
     """
+    print("\t\tGenerating xml file...", end='')
+
     # load template xml file
     template_xml = PARENT_PATH + SOURCE_FOLDER + 'template.xml'
     f_template = open(template_xml)
@@ -149,6 +157,8 @@ def generate_xml_marks(img_file, critical_points):
     f_result = open(result_xml, 'w')
     f_result.writelines(lines)
     f_result.close()
+
+    print('\tOK')
 
 
 def local_test(img_file=TEST_IMG, predic_path=PREDICTOR_MODEL):
