@@ -39,7 +39,9 @@ def generate_init(img_file):
 
     global UNIQUE_FOLDER
     UNIQUE_FOLDER = dirname
+
     print('\tOK')
+    return UNIQUE_FOLDER
 
 
 def generate_fg(img_file):
@@ -154,25 +156,33 @@ def generate_obj(tri_file):
     print('\tOK')
 
 
-def package_download(fbx_file, png_file):
+def build_zip_package(dirname, zipfilename):
     """
-    Package fbx file and png file for users to download
+    Build a .zip package for users to download
+    Package contains .obj .fbx and .png files
 
-    :param tri_file: fbx_file
-    :param png_file: png_file
-    :return: None
+    :param dirname: directory to be compressed
+    :param zipfilename: output name of zip file
     """
-    output_filename = PARENT_PATH + RESULT_FOLDER + "fbx&png"
-    source_dir = PARENT_PATH + RESULT_FOLDER
+    print("\tGenerating zip package file...", end='')
 
-    zipf = zipfile.ZipFile(output_filename, 'w')
-    pre_len = len(os.path.dirname(source_dir))
+    filelist = []
+    if os.path.isfile(dirname):
+        filelist.append(dirname)
+    else:
+        for root, dirs, files in os.walk(dirname):
+            for name in files:
+                ext = name.split('.')[1]
+                # Only .obj .fbx and .png files
+                if ext != 'obj' and ext != 'fbx' and ext != 'png':
+                    continue
+                filelist.append(os.path.join(root, name))
 
-    for parent, dirnames, filenames in os.walk(source_dir):
-        for filename in filenames:
-            pathfile = os.path.join(parent, filename)
-            arcname = pathfile[pre_len:].strip(os.path.sep)
-            zipf.write(pathfile, arcname)
-    zipf.close()
+    zf = zipfile.ZipFile(dirname + zipfilename, "w", zipfile.zlib.DEFLATED)
+    for tar in filelist:
+        arcname = tar[len(dirname):]
+        zf.write(tar, arcname)
+
+    zf.close()
 
     print('\tOK')

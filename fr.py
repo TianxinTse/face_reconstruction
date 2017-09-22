@@ -11,7 +11,7 @@ import sys
 
 def face_reconstruction(img_file):
     # initialize foler to store results
-    cf.generate_init(img_file)
+    folder = cf.generate_init(img_file)
 
     print("\tConstructing face from iamge...")
     # generate intermediate files
@@ -21,6 +21,9 @@ def face_reconstruction(img_file):
     # generate fbx and obj files
     cf.generate_fbx(tri_file)
     cf.generate_obj(tri_file)
+
+    # generate zip package of .obj .fbx and .png files
+    cf.build_zip_package(folder, 'fbx&obj&png.zip')
 
     print("\n\t-----------------------------")
     print("\tFace Reconstruction Succeeds!")
