@@ -7,6 +7,7 @@
 
 from construct_face import cf
 import sys
+import os
 
 
 def face_reconstruction(img_file):
@@ -29,11 +30,24 @@ def face_reconstruction(img_file):
     print("\tFace Reconstruction Succeeds!")
     print("\t-----------------------------\n")
 
+    foldername = os.path.split(img_file)[1].split('.')[0]
+    common_path = 'E:\\computer-vision\\human-face\\'
+
+    src = common_path + 'face-reconstruction\\results\\' + foldername
+    dst = common_path + \
+        'FaceModeling\\src\\main\\webapp\\images\\download\\' + \
+        foldername + '\\'
+
+    command = 'xcopy ' + src + ' ' + dst + ' /E /Y /Q'
+    print(command)
+    os.system(command)
+
 
 if __name__ == '__main__':
     """
     Command line need one argument: the image file
     """
+    print(sys.argv[1])
     if len(sys.argv) != 2:
         print("Usage:\n"
               "\n\tfr <image.jpg>")

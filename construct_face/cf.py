@@ -15,6 +15,9 @@ PARENT_PATH = os.path.dirname(__file__) + os.path.sep + '..'
 # The template for generating mesh
 SDK = '/fg3/sdk/csamDefault33/HeadHires'
 
+# Sources folder: imgs and xmls
+SOURCE_FOLDER = '/sources/'
+
 # Folder to store results: fg file, tri file, fbx file, etc
 RESULT_FOLDER = '/results/'
 
@@ -41,6 +44,7 @@ def generate_init(img_file):
     UNIQUE_FOLDER = dirname
 
     print('\tOK')
+    # print(UNIQUE_FOLDER)
     return UNIQUE_FOLDER
 
 
@@ -54,7 +58,9 @@ def generate_fg(img_file):
     print("\tGenerating fg file...")
 
     # get landmarks of face
-    image = os.path.abspath(os.getcwd() + img_file)
+    img_file = os.path.split(img_file)[1]
+    image = PARENT_PATH + SOURCE_FOLDER + img_file
+    # image = os.path.abspath(os.getcwd() + img_file)
     shape = fld.get_landmarks(image)
 
     # get critical points
